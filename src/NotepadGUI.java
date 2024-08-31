@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,9 @@ public class NotepadGUI extends JFrame {
 
     private JTextArea textArea;
     private File currentFile;
+
+    // swing's built in library to manage undo and redo functionalities
+    private UndoManager undoManager;
 
     public NotepadGUI() {
 
@@ -46,6 +50,7 @@ public class NotepadGUI extends JFrame {
 
         // add menus
         menuBar.add(addFileMenu());
+        menuBar.add(addEditMenu());
 
 
         add(toolbar, BorderLayout.NORTH);
@@ -167,6 +172,9 @@ public class NotepadGUI extends JFrame {
                 // if the current file is null then we have to perform save as functionality
                 if (currentFile == null) saveAsMenuItem.doClick();
 
+                if (currentFile == null) return;
+
+
                 try{
                     // write current file
                     FileWriter fileWriter = new FileWriter(currentFile);
@@ -183,11 +191,31 @@ public class NotepadGUI extends JFrame {
 
         // "exit" functionality - ends program process
         JMenuItem exitMenuItem = new JMenuItem("Exit");
+        exitMenuItem.addActionListener(new ActionListener() {
+           @Override
+            public void actionPerformed(ActionEvent e) {
+               // dispose of this gui
+               NotepadGUI.this.dispose();
+           }
+        });
         fileMenu.add(exitMenuItem);
 
 
 
         return fileMenu;
 
+    }
+
+    private JMenu addEditMenu(){
+        JMenu editMenu = new JMenu("Edit");
+
+        JMenuItem undoMenuItem = new JMenuItem("Undo");
+        editMenu.add(undoMenuItem);
+
+        JMenuItem redoMenuItem = new JMenuItem("Redo");
+        
+
+
+        return editMenu;
     }
 }
