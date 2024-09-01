@@ -1,4 +1,7 @@
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
@@ -28,6 +31,8 @@ public class NotepadGUI extends JFrame {
         fileChooser.setCurrentDirectory(new File(  "src/assets"));
         fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
 
+        undoManager = new UndoManager();
+
         addGuiComponents();
     }
 
@@ -36,6 +41,13 @@ public class NotepadGUI extends JFrame {
 
         // area to type text
         textArea = new JTextArea();
+        textArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
+            @Override
+            public void undoableEditHappened(UndoableEditEvent e) {
+                // adds each edit that we do in the text area (either adding or removing text)
+                undoManager.addEdit(e.getEdit());
+            }
+        });
         add(textArea, BorderLayout.CENTER);
 
     }
